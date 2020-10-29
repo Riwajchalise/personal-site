@@ -107,40 +107,95 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle">Contact Form</h5>
+          <h5 class="modal-title" id="exampleModalCenterTitle"><h3 id="feedback">Message</h3></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form action="" method="post">
-            <form class="contact-form d-flex flex-column align-items-center"
-              action="https://formspree.io/youremail@mail.com" method="POST">
+          <div class="container">
+                      
+            <form method="post" id="contact-form">
               <div class="form-group">
-                <input type="name" class="form-control" placeholder="Name" name="name" required />
+                <label>Name: *</label>
+                <input type="text" class="form-control" id="form-name" placeholder="Name">
               </div>
               <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email" name="name" required />
+                <label>Email: *</label>
+                <input type="text" class="form-control" id="form-email" placeholder="Email">
               </div>
-
               <div class="form-group">
-                <textarea id="message" class="form-control" type="text" placeholder="Message" rows="7" name="name"
-                  required></textarea>
+                <label>Phone:</label>
+                <input type="text" class="form-control" id="form-phone" placeholder="Phone">
               </div>
-
-              <button type="submit" class="btn btn-submit btn-primary">Submit</button>
+              <div class="form-group">
+                <label>Message:</label>
+                <textarea type="text" class="form-control" id="form-message" placeholder="Message" rows="5"></textarea>
+              </div>
+              <input type="submit"  class="btn btn-sm btn-primary" value="submit">
+              <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal" aria-label="Close">
+                Close
+              </button>
             </form>
-          </form>
+            <br>
+          </div>
         </div>
-        <div class="modal-footer">
         </div>
-      </div>
     </div>
   </div>
   <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.4.1.min.220afd743d.js?site=5ea837e8c8100167b2dffd49"
     type="text/javascript" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
   </script>
-  <script src="js/webflow.js" type="text/javascript"></script>
+<script>
+  // Process contact form
+$('#contact-form').submit(function(event) {
+  event.preventDefault();
+  $('#feedback').html('');
+  setTimeout(function() {
+    // Get data
+    var data = {
+      'entry.2064584785': $('#form-name').val(),
+      'emailAddress': $('#form-email').val(),
+      'entry.1338323238': $('#form-phone').val(),
+      'entry.1846031856': $('#form-message').val()
+    };
+
+    // Validate form
+    var formSuccess = true;
+    Object.keys(data).forEach(function(key, index) {
+      if (!data[key]) {
+        formSuccess = false;
+        $('#feedback').html('<label class="text-danger">Please complete all fields</label>');
+      }
+    });
+
+    if (formSuccess) {
+      // Send request
+      $.ajax({
+        url: 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSeDlzCyoUgHZ5Xmtymz9NPdoxj1LOtMHcdsM2ee9JPhgndYlg/formResponse',
+        type: 'POST',
+        crossDomain: true,
+        dataType: "xml",
+        data: data,
+        success: function(jqXHR, textStatus, errorThrown) {
+          console.log('Enter on success');
+          $('#feedback').html('<label class="text-success">Message sent! :)</label>');
+          document.getElementById("contact-form").reset();
+          document.getElementById("exampleModalCenter").modal('toggle');
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log('Enter on error');
+          $('#feedback').html('<label class="text-success">Message sent! :)</label>');
+          document.getElementById("contact-form").reset();
+          document.getElementById("exampleModalCenter").modal('toggle');
+        }
+      });
+    }
+  }, 300);
+});
+
+</script>
+<script src="js/webflow.js" type="text/javascript"></script>
   <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
 </body>
 
